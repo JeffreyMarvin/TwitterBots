@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import java.io.*;
+
 import com.blitztiger.twitterBots.Twitter;
 import com.blitztiger.twitterBots.TwitterBot;
 import com.blitztiger.twitterBots.Twitter.Status;
@@ -19,17 +21,45 @@ public class MarkovBot implements TwitterBot {
 	
 	private MarkovElement<String> head;
 	private List<MarkovElement<String>> allElements;
+	private List<Status> savedStatuses;
 	
+	@SuppressWarnings("unchecked")
 	public MarkovBot(){
-		head = new MarkovElement<String>("");
-		allElements = new ArrayList<MarkovElement<String>>();
+		ObjectInputStream objectIn = null;
+		try {
+			objectIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Markov.bin")));
+		} catch (Exception e) {
+			head = new MarkovElement<String>("");
+			allElements = new ArrayList<MarkovElement<String>>();
+			savedStatuses = new ArrayList<Status>();
+			return;
+		}
+		try {
+			head = (MarkovElement<String>)objectIn.readObject();
+			allElements = (List<MarkovElement<String>>)objectIn.readObject();
+			savedStatuses = (List<Status>)objectIn.readObject();
+		} catch (Exception e) {
+			head = new MarkovElement<String>("");
+			allElements = new ArrayList<MarkovElement<String>>();
+			savedStatuses = new ArrayList<Status>();
+			return;
+		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void runBot(String userName, String password, boolean publicTimeline, String userToGetTimelineOf) throws Exception{
+		try {
+			ObjectInputStream objectIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Markov.bin")));
+			head = (MarkovElement<String>)objectIn.readObject();
+			allElements = (List<MarkovElement<String>>)objectIn.readObject();
+			savedStatuses = (List<Status>)objectIn.readObject();
+		} catch (FileNotFoundException e) {}
+		System.out.println(head.toString());
+//		System.exit(0);
 		Random rand = new Random();
 		int iterations = 0; 
 		Twitter	twitter = new Twitter(userName, password);
-		List<Status> timeline, savedStatuses = new ArrayList<Status>();
+		List<Status> timeline;
 		System.out.println(twitter.getRateLimitStatus());
 		if(twitter.getRateLimitStatus() < 5){
 			System.out.println("Waiting because I went over the rate limit :(");
@@ -50,11 +80,13 @@ public class MarkovBot implements TwitterBot {
 				if(savedStatuses.contains(status)){
 					continue;
 				}
-				if(status.text.equals("")){
-					continue;
-				}
 				insertSentence(status.text);
 			}
+			ObjectOutputStream objectOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Markov.bin")));
+			objectOut.writeObject(head);
+			objectOut.writeObject(allElements);
+			objectOut.writeObject(savedStatuses);
+			objectOut.close();
 			if(iterations-- == 0){
 				String sentence = buildSentence();
 				if(sentence.length() > (140 - " #markov".length())){
@@ -62,9 +94,10 @@ public class MarkovBot implements TwitterBot {
 				} else {
 					sentence = sentence + " #markov";
 				}
-				twitter.setStatus(sentence);
+				//twitter.setStatus(sentence);
 				System.out.println(sentence);
-				iterations = rand.nextInt(60);
+				iterations = 0;
+				//iterations = rand.nextInt(60);
 			}
 			System.out.println("Waiting to avoid going over the rate limit");
 			Thread.sleep(waitBetweenRequestTime);
@@ -83,13 +116,14 @@ public class MarkovBot implements TwitterBot {
 		String[] words = sentence.split(" ");
 		MarkovElement<String> ele = head;
 		for(String word : words){
-			ele = ele.insert(findElement(word));
+			if(!word.equals(""))
+				ele = ele.insert(findElement(word));
 		}
 	}
 
 	private MarkovElement<String> findElement(String word) {
 		for(MarkovElement<String> element : allElements){
-			if(element.getValue().equals(word)){
+			if(element.getValue().toLowerCase().equals(word.toLowerCase())){
 				return element;
 			}
 		}
@@ -101,7 +135,7 @@ public class MarkovBot implements TwitterBot {
 	public static void main(String[] args){
 		while(true){
 			try{
-				new MarkovBot().runBot("markovtwain", "markov", false, null);
+				new MarkovBot().runBot("markovtwain", "****", false, null);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Whoops, there was a fail... let's try that again in a minute...");
