@@ -1,5 +1,6 @@
 package com.blitztiger.twitterBots.markov;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,7 +10,7 @@ import java.util.Random;
   * Copyright Jeffrey Marvin, released for non-commercial use with attribution.
 **/
 
-public class MarkovElement<T> {
+public class MarkovElement<T> implements Serializable {
 	private T value;
 	private ArrayList<MarkovElement<T>> branches;
 	
@@ -44,5 +45,14 @@ public class MarkovElement<T> {
 		}
 		Random rand = new Random();
 		return branches.get(rand.nextInt(branches.size()));
+	}
+	
+	public String toString(){
+		String str;
+		str = value.toString() + "\n Links: \n";
+		for(MarkovElement<T> ele : branches){
+			str += "\t" + ele.getValue() + "\n";
+		}
+		return str;
 	}
 }
