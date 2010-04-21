@@ -8,6 +8,10 @@ import com.blitztiger.twitterBots.Twitter;
 import com.blitztiger.twitterBots.TwitterBot;
 import com.blitztiger.twitterBots.Twitter.Status;
 
+/**
+  * @author Jeffrey Marvin
+  * Copyright Jeffrey Marvin, released for non-commercial use with attribution.
+**/
 
 public class MarkovBot implements TwitterBot {
 	static long waitBetweenRequestTime = Long.valueOf("30000");//30,000 milliseconds = 30 seconds
@@ -97,7 +101,7 @@ public class MarkovBot implements TwitterBot {
 	public static void main(String[] args){
 		while(true){
 			try{
-				new MarkovBot().runBot("markovtwain", "*****", false, null);
+				new MarkovBot().runBot("markovtwain", "markov", false, null);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Whoops, there was a fail... let's try that again in a minute...");

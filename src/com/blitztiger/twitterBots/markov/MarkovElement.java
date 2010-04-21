@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+  * @author Jeffrey Marvin
+  * Copyright Jeffrey Marvin, released for non-commercial use with attribution.
+**/
 
 public class MarkovElement<T> {
 	private T value;

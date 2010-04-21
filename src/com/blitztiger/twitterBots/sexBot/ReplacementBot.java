@@ -5,6 +5,12 @@ import java.util.*;
 import com.blitztiger.twitterBots.Twitter;
 import com.blitztiger.twitterBots.TwitterBot;
 import com.blitztiger.twitterBots.Twitter.Status;
+
+/**
+  * @author Jeffrey Marvin
+  * Copyright Jeffrey Marvin, released for non-commercial use with attribution.
+**/
+
 public class ReplacementBot implements TwitterBot {
 	
 	static long waitBetweenRequestTime = Long.valueOf("30000");//milliseconds
