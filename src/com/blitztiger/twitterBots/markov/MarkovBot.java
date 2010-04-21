@@ -94,10 +94,10 @@ public class MarkovBot implements TwitterBot {
 				} else {
 					sentence = sentence + " #markov";
 				}
-				//twitter.setStatus(sentence);
+				twitter.setStatus(sentence);
 				System.out.println(sentence);
-				iterations = 0;
-				//iterations = rand.nextInt(60);
+				//iterations = 0;
+				iterations = rand.nextInt(60);
 			}
 			System.out.println("Waiting to avoid going over the rate limit");
 			Thread.sleep(waitBetweenRequestTime);
