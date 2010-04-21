@@ -13,7 +13,7 @@ public class CopyOfSexBot implements TwitterBot {
 	public static void main(String args[]){
 		while(true){
 			try{
-				new CopyOfSexBot().runBot("useablethoughts", "liger0", true, null);
+				new CopyOfSexBot().runBot("*****", "*****", true, null);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Whoops, there was a fail... let's try that again in a minute...");

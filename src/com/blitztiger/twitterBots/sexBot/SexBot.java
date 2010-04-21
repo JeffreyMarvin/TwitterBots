@@ -13,7 +13,7 @@ public class SexBot implements TwitterBot {
 	public static void main(String args[]){
 		while(true){
 			try{
-				new SexBot().runBot("blitztiger", "liger0", false, null);
+				new SexBot().runBot("*****", "*****", false, null);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Whoops, there was a fail... let's try that again in a minute...");

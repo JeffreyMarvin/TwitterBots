@@ -19,7 +19,7 @@ public class ReplacementBot implements TwitterBot {
 		replacements.put(" EX", " SEX");		
 		while(true){
 			try{
-				new ReplacementBot().setMap(replacements).runBot("blitztiger", "liger0", false, null);
+				new ReplacementBot().setMap(replacements).runBot("*****", "*****", false, null);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Whoops, there was a fail... let's try that again in a minute...");
