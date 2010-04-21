@@ -10,8 +10,8 @@ import com.blitztiger.twitterBots.Twitter.Status;
 
 
 public class MarkovBot implements TwitterBot {
-	static long waitBetweenRequestTime = Long.valueOf("30000");//milliseconds
-	static long waitIfExceedRateLimitTime = Long.valueOf("120000");//milliseconds
+	static long waitBetweenRequestTime = Long.valueOf("30000");//30,000 milliseconds = 30 seconds
+	static long waitIfExceedRateLimitTime = Long.valueOf("120000");//120,000 milliseconds = 2 minutes
 	
 	private MarkovElement<String> head;
 	private List<MarkovElement<String>> allElements;
@@ -44,6 +44,9 @@ public class MarkovBot implements TwitterBot {
 			} 
 			for(Status status : timeline){
 				if(savedStatuses.contains(status)){
+					continue;
+				}
+				if(status.text.equals("")){
 					continue;
 				}
 				insertSentence(status.text);
