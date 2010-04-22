@@ -21,7 +21,7 @@ public class MarkovBot implements TwitterBot {
 	
 	private MarkovElement<String> head;
 	private List<MarkovElement<String>> allElements;
-	private List<Status> savedStatuses;
+	private List<String> savedStatuses;
 	
 	@SuppressWarnings("unchecked")
 	public MarkovBot(){
@@ -31,17 +31,17 @@ public class MarkovBot implements TwitterBot {
 		} catch (Exception e) {
 			head = new MarkovElement<String>("");
 			allElements = new ArrayList<MarkovElement<String>>();
-			savedStatuses = new ArrayList<Status>();
+			savedStatuses = new ArrayList<String>();
 			return;
 		}
 		try {
 			head = (MarkovElement<String>)objectIn.readObject();
 			allElements = (List<MarkovElement<String>>)objectIn.readObject();
-			savedStatuses = (List<Status>)objectIn.readObject();
+			savedStatuses = (List<String>)objectIn.readObject();
 		} catch (Exception e) {
 			head = new MarkovElement<String>("");
 			allElements = new ArrayList<MarkovElement<String>>();
-			savedStatuses = new ArrayList<Status>();
+			savedStatuses = new ArrayList<String>();
 			return;
 		}
 	}
@@ -52,7 +52,7 @@ public class MarkovBot implements TwitterBot {
 			ObjectInputStream objectIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Markov.bin")));
 			head = (MarkovElement<String>)objectIn.readObject();
 			allElements = (List<MarkovElement<String>>)objectIn.readObject();
-			savedStatuses = (List<Status>)objectIn.readObject();
+			savedStatuses = (List<String>)objectIn.readObject();
 		} catch (FileNotFoundException e) {}
 		System.out.println(head.toString());
 //		System.exit(0);
@@ -77,10 +77,16 @@ public class MarkovBot implements TwitterBot {
 				timeline = twitter.getFriendsTimeline();
 			} 
 			for(Status status : timeline){
-				if(savedStatuses.contains(status)){
-					continue;
+				boolean alreadyAdded = false;
+				for(String saved : savedStatuses){
+					if(status.text.equals(saved)){
+						alreadyAdded = true;
+					}
 				}
-				insertSentence(status.text);
+				if(!alreadyAdded){
+					insertSentence(status.text);
+					savedStatuses.add(status.text);
+				}
 			}
 			ObjectOutputStream objectOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("Markov.bin")));
 			objectOut.writeObject(head);
@@ -135,7 +141,7 @@ public class MarkovBot implements TwitterBot {
 	public static void main(String[] args){
 		while(true){
 			try{
-				new MarkovBot().runBot("markovtwain", "****", false, null);
+				new MarkovBot().runBot("markovtwain", "****", true, null);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Whoops, there was a fail... let's try that again in a minute...");
